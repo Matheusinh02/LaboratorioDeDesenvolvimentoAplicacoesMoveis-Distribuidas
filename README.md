@@ -27,33 +27,39 @@ Cliente → API Gateway:3000
 
 List Service → consulta Item Service para detalhes ao adicionar itens
 
-Requisitos
+```
 
-Node.js 18+
+---
 
-Nenhum banco externo, todos os dados ficam em arquivos JSON
+## Requisitos
+- **Node.js 18+**
+- Sem banco externo: tudo em **arquivos JSON**
 
-Instalação
+## Instalação
+```bash
 npm install
+```
 
-Execução
-
-Serviços podem ser executados separadamente:
-
+## Execução
+Em **quatro terminais** separados (ou use `start:all`):
+```bash
 npm run start:user     # Usuários 3001
 npm run start:item     # Itens 3002
 npm run start:list     # Listas 3003
 npm run start:gateway  # Gateway 3000
 
-
-Ou tudo de uma vez:
-
+```
+Ou:
+```bash
 npm run start:all
+```
 
+> Dica: defina `JWT_SECRET` para trocar o segredo do JWT (opcional).
 
-Opcional: defina JWT_SECRET para alterar o segredo JWT.
+---
 
-Endpoints
+## Endpoints Principais (resumo)
+
 User Service (3001)
 
 POST /auth/register — criar usuário
@@ -64,8 +70,8 @@ GET /users/:id — JWT obrigatório (somente o próprio usuário)
 
 PUT /users/:id — JWT obrigatório (atualiza perfil e preferências)
 
-Exemplo de Usuário
-
+**Schema do Usuário**
+```json
 {
   "id": "uuid",
   "email": "string",
@@ -77,6 +83,8 @@ Exemplo de Usuário
   "createdAt": "timestamp",
   "updatedAt": "timestamp"
 }
+
+```
 
 Item Service (3002)
 
@@ -95,8 +103,8 @@ GET /search?q= — busca por nome/marca
 Seed inicial: 20 itens em Alimentos, Limpeza, Higiene, Bebidas, Padaria
 Arquivo: services/item-service/data/items.json
 
-Exemplo de Item
-
+**Schema do Item**
+```json
 {
   "id": "uuid",
   "name": "string",
@@ -109,6 +117,8 @@ Exemplo de Item
   "active": true,
   "createdAt": "timestamp"
 }
+
+```
 
 List Service (3003) — JWT
 
@@ -130,8 +140,8 @@ DELETE /lists/:id/items/:itemId — remover item
 
 GET /lists/:id/summary — resumo automático
 
-Exemplo de Lista
-
+**Schema da Lista**
+```json
 {
   "id": "uuid",
   "userId": "string",
@@ -159,6 +169,8 @@ Exemplo de Lista
   "updatedAt": "timestamp"
 }
 
+```
+
 API Gateway (3000)
 
 /api/auth/* → User Service
@@ -180,6 +192,23 @@ GET /registry — serviços registrados
 Circuit Breaker: 3 falhas consecutivas abrem o circuito por 30s por serviço
 Logs: todas as requisições registradas com morgan
 
+---
+
+## Fluxo de Demonstração (client-demo.js)
+1. Registro de usuário
+2. Login (token JWT)
+3. Busca de itens (categoria Alimentos)
+4. Criação de lista
+5. Adição de item à lista
+6. Dashboard agregado e busca global
+
+**Como rodar a demo** (com todos os serviços em execução):
+```bash
+node client-demo.js
+```
+
+---
+
 Dados JSON
 
 data/users.json — usuários
@@ -193,29 +222,12 @@ Variáveis de Ambiente
 JWT_SECRET — segredo do JWT (opcional)
 
 SERVICE_REGISTRY_FILE — caminho do arquivo do registry (opcional)
+---
 
-Demonstração (client-demo.js)
+## Entregáveis (checklist)
+- ✅ 4 serviços funcionais (User, Item, List, Gateway)
+- ✅ Service Registry implementado (arquivo + heartbeat + discover)
+- ✅ Bancos NoSQL com dados de exemplo (items seed)
+- ✅ Scripts `package.json` para execução (`start:*` e `start:all`)
 
-Exemplo de fluxo:
-
-Registrar usuário
-
-Login (JWT)
-
-Buscar itens por categoria
-
-Criar lista
-
-Adicionar item
-
-Consultar dashboard e busca global
-
-node client-demo.js
-
-
-Se você quiser, posso **gerar também uma versão menor e enxuta**, ideal para colocar direto no GitHub sem poluir, com apenas instruções essenciais e endpoints resumidos.  
-
-Quer que eu faça essa versão enxuta também?
-
-
-O ChatGPT pode cometer erros. Considere verificar informações importantes.
+---
